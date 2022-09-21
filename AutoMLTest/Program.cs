@@ -43,6 +43,9 @@ namespace AutoMLTest
                              {
                                  LbfgsMaximumEntropyMulticlassTrainer.Options options = new LbfgsMaximumEntropyMulticlassTrainer.Options
                                  {
+                                     MaximumNumberOfIterations = ss.MaximumNumberOfIterations,
+                                     InitialWeightsDiameter = ss.InitialWeightsDiameter,
+                                     L2Regularization = ss.L2Regularization,
                                      L1Regularization = ss.L1Regularization,
                                      FeatureColumnName = "Features",
                                      LabelColumnName = "Label",
@@ -55,8 +58,14 @@ namespace AutoMLTest
 
             var dataSplit = mlContext.Data.TrainTestSplit(trainValidateData, testFraction: 0.2);
 
-            // Configure AutoML
-            var myTrialRunner = new MyRunner(mlContext, dataSplit.TrainSet, dataSplit.TestSet);
+            // setup logger
+            mlContext.Log += (e, o) =>
+            {
+                if (o.RawMessage.Contains("Trial"))
+                {
+                    Console.WriteLine(o.RawMessage);
+                }
+            };
 
             // NotebookMonitor plots trials and show best run nicely in notebook output cell.
             //var monitor = new NotebookMonitor();
@@ -64,8 +73,8 @@ namespace AutoMLTest
             var experiment = mlContext.Auto().CreateExperiment()
                             .SetPipeline(pipeline)
                             .SetTrainingTimeInSeconds(30)
-                            .SetTrialRunner(myTrialRunner)
-                            .SetEvaluateMetric(MulticlassClassificationMetric.MacroAccuracy, "Label", "PredictedLabel");
+                            .SetDataset(dataSplit.TrainSet, dataSplit.TestSet)
+                            .SetMulticlassClassificationMetric(MulticlassClassificationMetric.MacroAccuracy, "Label", "PredictedLabel");
                             //.SetMonitor(monitor);
 
             // Configure Visualizer			

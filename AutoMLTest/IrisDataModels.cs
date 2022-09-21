@@ -1,7 +1,7 @@
 ﻿using Microsoft.ML.Data;
+using Microsoft.ML.SearchSpace;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,17 +36,17 @@ namespace AutoMLTest
 
     public class IrisSearchSpace
     {
-        [Range(0.5, 0.7)]
+        [Range(0, 1.0)]
         public float L1Regularization { get; set; } = 0.5f;
 
-        // [Range(0.0, 1.0)]
-        // public float L2Regularization { get; set; } = 1;
+        [Range(0.0, 1.0)]
+        public float L2Regularization { get; set; } = 1;
 
-        // [Range(0, 10)]
-        // public int MaximumNumberOfIterations { get; set; } = 1;
+        [Range(1, 1000)]
+        public int MaximumNumberOfIterations { get; set; } = 1;
 
-        // [Range(0, 1)]
-        // public float InitialWeightsDiameter { get; set; } = 0;
+        [Range(0, 1)]
+        public float InitialWeightsDiameter { get; set; } = 0;
     }
 
 }
